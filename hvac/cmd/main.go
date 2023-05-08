@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -17,7 +18,12 @@ const dynamoDBUpdatePeriod = 1 * time.Minute
 
 func main() {
 	// TODO: Load server settings from configuration file
-	settings, err := settings.Load("config/dev.yaml")
+	stage := os.Getenv("DEPLOYMENT_ENV")
+	if stage == "" {
+		stage = "dev"
+		log.Println("assuming dev environment")
+	}
+	settings, err := settings.Load(fmt.Sprintf("config/%s.yaml", stage))
 	if err != nil {
 		log.Fatalf("Error loading settings: %s", err)
 	}
